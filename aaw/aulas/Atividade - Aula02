@@ -40,13 +40,15 @@ Content-Type: application/json
 
 1. O que o cliente pediu (verbo + recurso)?
 
-Respota: 
+***Resposta***
+
 Verbo -> GET.
 Recurso -> /api/livros.
 
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
 
-Resposta: 
+***Resposta***
+
 Status -> 200 OK (Informa que a requisição foi processada com sucesso e o corpo da resposta contém os dados solicitados.
 
 Deu certo -> Sim.
@@ -55,7 +57,8 @@ Culpa de quem se não deu certo -> Se não tivesse dado certo apareceria uma not
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
 
-Resposta: 
+***Resposta***
+
 Não, o servidor não muda. O método GET é seguro e idempotente e nenhum livro é criado, alterado ou removido.
 A resposta provavelmete será a mesma, a não ser que o usuário tenha modificado entre as requisições.
 
@@ -80,13 +83,15 @@ Content-Type: application/problem+json
 
 1. O que o cliente pediu (verbo + recurso)?
 
-Respota: 
+***Resposta***
+
 Verbo -> GET.
 Recurso -> /api/livros/99.
 
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
 
-Resposta:
+***Resposta***
+
 Status -> 404 Not Found, informa que o servidor não encontrou o recurso solicitado no endereço.
 
 Deu certo -> Não. A operação falhou pois não conseguir entregar o livro que foi pedido.
@@ -95,7 +100,8 @@ Culpa de quem -> Do cliente. O código informa o erro 400, isso indica que a req
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
 
-Resposta:
+***Resposta***
+
 Estado do Servidor -> Não muda. O método Get é seguro e idempotente e não criar, altera e nem remove nenhum dado. O livro 99 continua não exitindo.
 A respota será a mesma nas 3 vezes, 404 Not Found como o corpo { "title": "Not Found", "Status": 404 }, a menos que, crie o livro 99 entre uma requisição.
 
@@ -123,13 +129,15 @@ Content-Type: application/json
 
 1. O que o cliente pediu (verbo + recurso)?
 
-Resposta: 
+***Resposta***
+
 Verbo -> POST.
 Recurso -> /api/livros.
 
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
 
-Resposta: 
+***Resposta***
+
 Status -> 201 Created: Isso mostra que a requição foi bem-sucedida e que um novo recurso foi criado no servidor como resultado.
 
 Deu certo -> Sim. O livro "Domain-Driven Design" foi cadastrado com o id: 8.
@@ -138,7 +146,8 @@ Se não tivesse dado certo, iria aparecer um código 400 Bad Request para JSON i
 
 3. Enviando este POST 3 vezes seguidas, o que acontece na estante? Para que serve o header Location?
 
-Resposta:
+***Resposta***
+
 O que acontece na estante -> O servidor criará 3 livros novos e distintos com o mesmo titulo e autor. Como o POST não é idempotente, cada chamada gera um novo resgitro. Se o ID 8 foi criado na primeira vez, os próximos IDs criados serão os 9 e o 10 e assim em diante.
 
 Header e Location -> Ele indica ao cliente a URL exata onde o recurso recém-criado pode ser acessado pelo GET /api/livros/8. Como se o servidor estivesse mostrando que o "Seu livro está aqui".
@@ -166,13 +175,15 @@ Content-Type: application/json
 
 1. O que o cliente pediu (verbo + recurso)?
 
-Resposta: 
+***Resposta***
+
 Verbo -> PUT.
 Recursos -> /api/livros/7.
 
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
 
-Resposta:
+***Resposta***
+
 Status -> 200 OK, Isso mostra que a requisição foi processada com sucesso e o corpo da resposta contém a representação atualizada do recurso.
 
 Deu certo -> Sim. O livro foi atualizado com as nova informações do autor.
@@ -180,6 +191,12 @@ Deu certo -> Sim. O livro foi atualizado com as nova informações do autor.
 Se não tivesse dado certo, iria aparecer um código 404 Not Found se o ID 7 não existisse, ou 400 Bad Request se o JSON estivesse malformado, isso indicaria erro do cliente.
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
+
+***Resposta***
+
+Estado do Sevidor -> Muda apenas na primeria vez. Na primeira chamada altera o autor de "Hunt e Thomas" para "D.Hunt; D Thomas". Na segunda e na terceira vez, o recurso já está exatamente com os dados enviados, então a operação de substituição não produz nenhuma alteração efetiva no estado. O método PUT é idempotente: o estado finalapós 1,2, ou 3 requisições é exatamente o mesmo.
+
+Resposta -> Será idêntica nas 3 vezes em que o servidor retornará 200 OK com o mesmo corpo { "id": 7, "titulo"; "O programador Pragmático", "autor": "D. Hunt; D. Thomas"} em todas as chamadas, pois esse é o estado atual persistente do recurso.
 
 ## REQUISIÇÃO 05 — Fora do catálogo
 
@@ -198,9 +215,28 @@ HTTP/1.1 204 No Content
 
 1. O que o cliente pediu (verbo + recurso)?
 
+***Resposta***
+
+Verbo -> DELETE.
+Recurso -> /api/livros/7.
+
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
 
+***Resposta***
+
+Status -> 204 No Content: informa que a requisição foi processada com sucesso, o livro foi removido, mas o servidor não tem nenhum conteúdo adicional para enviar no corpo da resposta.
+
+Deu certo -> Sim. O livro 7 foi deletado do sistema.
+
+Se não deu -> Caso não tenha dado certo, apareceria o código 404 Not Found se o ID 7 já não existisse, ou 401 Unauthorized sem permissão, indicando erro do cliente.
+
 3. Repetindo o DELETE, o estado do servidor muda? Que resposta você ESPERA na segunda vez?
+
+***Resposta***
+
+Estado do servidor -> Muda apenas na primeira chamada, o livro 7 deixa de existir. Na segunda e terceira vez o estado não se altera mais, pois o recurso já foi removido usando o método DELETE que é idempotente.
+
+Resposta esperada na segunda vez -> 404 Not Found ou 410 Gone. Como o livro com ID 7 já não existe mais, servidor não pode executar um exclusão sobre um recurso inexistente. Na prática, a maioria das APIs REST retorna 404 para tentativas de deletar um recurso que já foi removido, informando que o alvo da operação não foi encontrada. a resposta muda de 204 na primeira vez para 404 nas proximas vezes, justamente porque o servidor valida a existência do recurso antes de aplicar a operação.
 
 ## REQUISIÇÃO 06 — O cadastro capenga
 
@@ -226,10 +262,28 @@ Content-Type: application/problem+json
 
 1. O que o cliente pediu (verbo + recurso)?
 
+***Resposta***
+
+Verbo -> POST.
+Recurso -> /api/livros.
+
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
+
+***Resposta***
+
+Status -> 400 Bad Request Isso informa que o servidor não pode processar a requisição porque ela contém um erro de sintaxe ou validação.
+
+Deu certo -> Não. O livro não foi criado.
+
+Culpa de quem -> do cliente. Códigos 400 indica erro na requisição feita pelo cliente. Aqui ele desrespeitou a regra de negócio que exige o título para criar um livro. O servidor até indica claramente no corpo da resposta qual campo está com problema.
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
 
+***Resposta***
+
+Estado do servidor -> Não muda. Como a validação falha todas as vezes, o servidor recusa a criação em todas as tentativas. Nenhum livro é inserido no banco. Mesmo que o POST não seja idempotente, aqui o erro é consistente impede qualquer efeito colateral.
+
+Resposta -> Será a mesma nas terceiras vezes, sempre 400 Bad Request  com o corpo {"title": "Bad Request", "status": 400, "errors": { "Titulo": [ " O campo Tutulo é obrigatório" ] } }. O servidor não cria nada, então a resposta se mantém idêntica.
 ## TABELA-SÍNTESE — Os verbos do HTTP
 
 *Preencham com base nos 6 cards. “Seguro” = não altera nada no servidor. “Idempotente” = repetir N vezes deixa o servidor no mesmo estado que 1 vez.*
