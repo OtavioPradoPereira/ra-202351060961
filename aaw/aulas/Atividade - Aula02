@@ -48,7 +48,9 @@ Recurso -> /api/livros.
 
 Resposta: 
 Status -> 200 OK (Informa que a requisição foi processada com sucesso e o corpo da resposta contém os dados solicitados.
+
 Deu certo -> Sim.
+
 Culpa de quem se não deu certo -> Se não tivesse dado certo apareceria uma notifcação com algum erro, ex: 400,404,401 ou 500 e 503, mas como a resposta foi 200 então o servidor foi entregue com sucesso.
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
@@ -86,7 +88,9 @@ Recurso -> /api/livros/99.
 
 Resposta:
 Status -> 404 Not Found, informa que o servidor não encontrou o recurso solicitado no endereço.
+
 Deu certo -> Não. A operação falhou pois não conseguir entregar o livro que foi pedido.
+
 Culpa de quem -> Do cliente. O código informa o erro 400, isso indica que a requisição foi feita pelo cliente. O id que ele especificou (99) não corresponde a nenhuim livro cadastrado. 
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
@@ -119,9 +123,25 @@ Content-Type: application/json
 
 1. O que o cliente pediu (verbo + recurso)?
 
+Resposta: 
+Verbo -> POST.
+Recurso -> /api/livros.
+
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
 
+Resposta: 
+Status -> 201 Created: Isso mostra que a requição foi bem-sucedida e que um novo recurso foi criado no servidor como resultado.
+
+Deu certo -> Sim. O livro "Domain-Driven Design" foi cadastrado com o id: 8.
+
+Se não tivesse dado certo, iria aparecer um código 400 Bad Request para JSON invélido ou 422 para dados faltantes, isso indicaria que é erro do cliente.
+
 3. Enviando este POST 3 vezes seguidas, o que acontece na estante? Para que serve o header Location?
+
+Resposta:
+O que acontece na estante -> O servidor criará 3 livros novos e distintos com o mesmo titulo e autor. Como o POST não é idempotente, cada chamada gera um novo resgitro. Se o ID 8 foi criado na primeira vez, os próximos IDs criados serão os 9 e o 10 e assim em diante.
+
+Header e Location -> Ele indica ao cliente a URL exata onde o recurso recém-criado pode ser acessado pelo GET /api/livros/8. Como se o servidor estivesse mostrando que o "Seu livro está aqui".
 
 ## REQUISIÇÃO 04 — Corrigindo a ficha completa
 
@@ -146,7 +166,18 @@ Content-Type: application/json
 
 1. O que o cliente pediu (verbo + recurso)?
 
+Resposta: 
+Verbo -> PUT.
+Recursos -> /api/livros/7.
+
 2. O que o status code informa? Deu certo? Culpa de quem se não deu?
+
+Resposta:
+Status -> 200 OK, Isso mostra que a requisição foi processada com sucesso e o corpo da resposta contém a representação atualizada do recurso.
+
+Deu certo -> Sim. O livro foi atualizado com as nova informações do autor.
+
+Se não tivesse dado certo, iria aparecer um código 404 Not Found se o ID 7 não existisse, ou 400 Bad Request se o JSON estivesse malformado, isso indicaria erro do cliente.
 
 3. Repetindo esta requisição 3 vezes seguidas, o estado do servidor muda? E a resposta?
 
