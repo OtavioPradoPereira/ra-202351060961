@@ -42,7 +42,21 @@ Falta de paginação/filtro (problema de desempenho e escalabilidade): Retornar 
 
 Método: GET (semântica correta para consulta).
 Rota: /api/alunos (substantivo no plural, recurso bem definido).
-Parâmetros de consulta (query string): ?pagina=1&limite=20&nome=Maria (exemplo). Isso permite paginar, filtrar e ordenar os resultados sem sobrecarregar a rede.
+Parâmetros de consulta (query string): ?pagina=1&limite=20&nome=Maria.
+
+Exemplo:
+
+```http
+GET /api/alunos?pagina=1&limite=20 HTTP/1.1
+Host: escolatech.br
+Accept: application/json
+```
+Status codes esperados:
+
+200 OK: Requisição bem-sucedida. O corpo trará apenas a página solicitada.
+400 Bad Request: Caso os parâmetros de consulta estejam inválidos.
+404 Not Found: Caso a rota /api/alunos não exista.
+500 Internal Server Error: Em caso de falha inesperada no servidor.
 
 ## ENDPOINT 02 — GET /deletarAluno?id=7
 
@@ -56,8 +70,56 @@ Obs. da wiki: "dá pra deletar pelo navegador, bem prático".
 ```
 
 1. Qual(is) problema(s) de design vocês identificam?
+ 
+ ***Resposta***
+
+Usa GET para uma operação destrutiva: GET deve ser seguro/sem efeitos colaterais. Aqui ele remove dados.
+
+Verbo/ação na URL: deletarAluno é uma ação, não um recurso. A URL fica no estilo RPC, não REST.
+
+ID via query string: ?id=7 deveria ser um parâmetro de caminho, como /alunos/7.
+
+Sempre retorna 200 OK + "OK", mesmo se o aluno não existir: mascara o caso de recurso inexistente. O cliente não sabe se algo foi realmente deletado.
+
+Status codes inadequados: falta 404, 400, 401/403, 409, etc.
+
+Risco de segurança/CSRF: como é GET, pode ser disparado por um simples link/imagem se o usuário estiver autenticado.
+
+Resposta em texto simples: "OK" não é um formato padronizado/consistente; poderia ser vazio ou JSON.
 
 2. Seu redesenho (método + rota + status codes):
+
+***Resposta***
+
+Método + rota:
+```http
+DELETE /alunos/{id}
+```
+Exemplo:
+```http
+DELETE /alunos/7
+```
+Status codes:
+204 No Content: aluno removido com sucesso.
+404 Not Found: aluno não encontrado.
+400 Bad Request: ID inválido.
+401 Unauthorized: usuário não autenticado.
+403 Forbidden: usuário sem permissão para deletar.
+409 Conflict: se houver vínculos que impeçam a exclusão, como matrículas, notas, etc.
+500 Internal Server Error: erro inesperado no servidor.
+
+Exemplo de resposta com sucesso:
+```http
+HTTP/1.1 204 No Content
+```
+Exemplo de aluno inexistente:
+```http
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+{
+ "erro": "Aluno não encontrado"
+}
+```
 
 ## ENDPOINT 03 — POST /api/alunos (criação)
 
@@ -72,7 +134,55 @@ O app precisa buscar a lista inteira de novo para descobrir o ID gerado.
 
 1. Qual(is) problema(s) de design vocês identificam?
 
+***Resposta***
+
+Status 200 OK para criação: o correto seria 201 Created. 200 indica sucesso genérico, não que um recurso foi criado.
+
+Corpo "OK" sem representação do recurso: a resposta não devolve o aluno criado nem o id gerado.
+
+Falta do header Location: deveria apontar para a URL do recurso recém-criado.
+
+Obriga o cliente a fazer outra requisição: o app precisa buscar a lista inteira para descobrir o ID. Isso é ineficiente, aumenta o acoplamento.
+
+Contrato de erros indefinido: não documenta o que acontece com payload inválido, aluno duplicado, falta de permissão etc.
+
+Método e rota estão adequados: POST /api/alunos é aceitável para criação com ID gerado pelo servidor. O problema principal está na resposta.
+
 2. Seu redesenho (método + rota + status codes):
+
+***Resposta***
+
+Método + rota:
+```http
+POST /api/alunos
+```
+Requisição:
+```http
+POST /api/alunos
+Content-Type: application/json
+{
+ "nome": "Maria Silva",
+ "curso": "Engenharia"
+}
+```
+Resposta de sucesso:
+```http
+HTTP/1.1 201 Created
+Location: /api/alunos/7
+Content-Type: application/json
+{
+ "id": 7,
+ "nome": "Maria Silva",
+ "curso": "Engenharia"
+}
+```
+Status codes:
+· 201 Created: aluno criado com sucesso.
+· 400 Bad Request ou 422 Unprocessable Entity: payload inválido ou campos obrigatórios ausentes.
+· 409 Conflict: aluno já existente, se houver regra de unicidade.
+· 401 Unauthorized: usuário não autenticado.
+· 403 Forbidden: usuário sem permissão.
+· 500 Internal Server Error: erro inesperado no servidor.
 
 ## ENDPOINT 04 — GET /escolas/1/turmas/3/alunos/25/matriculas/88/disciplinas/12
 
@@ -87,7 +197,57 @@ Resposta: 200 OK + JSON da disciplina.
 
 1. Qual(is) problema(s) de design vocês identificam?
 
+***Resposta***
+
+Aninhamento excessivo: a URL tem 5 níveis (escolas, turmas, alunos, matriculas, disciplinas). Isso acopla o cliente à hierarquia interna do sistema.
+
+Obriga o app a conhecer 5 IDs: escola, turma, aluno, matrícula e disciplina. Muitos são redundantes: a matrícula 88 já deveria identificar aluno, turma e escola.
+
+IDs inconsistentes/redundantes: nada garante que a matrícula 88 pertence ao aluno 25, que está na turma 3, da escola 1. A API precisaria validar toda essa cadeia.
+
+URL frágil e difícil de evoluir: se a hierarquia mudar, todos os clientes quebram.
+
+Mistura contexto com identificação do recurso: o recurso retornado é a disciplina 12 (ou o vínculo matrícula 88), e não a escola/turma/aluno inteiros.
+
+Documentação pobre de erros: só documenta 200 OK; não diz o que retornar se a disciplina, a matrícula ou o aluno não existirem.
+
+GET está correto: é uma consulta, então GET é adequado. O problema é a rota.
+
 2. Seu redesenho (método + rota + status codes):
+
+***Reposta***
+
+Caso A — disciplina é um recurso global, com ID único:
+```http
+GET /api/disciplinas/{id}
+```
+Exemplo:
+```http
+GET /api/disciplinas/12
+```
+Caso B — disciplina só existe no contexto da matrícula:
+```http
+GET /api/matriculas/{matriculaId}/disciplinas/{disciplinaId}
+```
+Exemplo:
+```http
+GET /api/matriculas/88/disciplinas/12
+```
+Para listar as disciplinas de uma matrícula:
+```http
+GET /api/matriculas/88/disciplinas
+```
+Para listar as matrículas de um aluno:
+```http
+GET /api/alunos/25/matriculas
+```
+Status codes recomendados:
+200 OK: disciplina encontrada e retornada com sucesso.
+400 Bad Request: ID inválido, ex.: /api/matriculas/abc/disciplinas/12.
+401 Unauthorized: usuário não autenticado.
+403 Forbidden: usuário sem permissão.
+404 Not Found: matrícula não encontrada ou disciplina não encontrada/vínculo inexistente.
+500 Internal Server Error: erro inesperado.
 
 ## ENDPOINT 05 — GET /api/alunos/7/matriculas (erro)
 
@@ -102,7 +262,87 @@ O app mobile quebra tentando fazer parse do JSON.
 
 1. Qual(is) problema(s) de design vocês identificam?
 
+***Resposta***
+
+Status 200 OK para um erro: se o aluno não existe, o correto é 404 Not Found, não 200.
+
+Resposta em HTML em uma API JSON: o app mobile espera JSON e quebra ao tentar fazer parse de <html><b>Erro: aluno nao existe!</b></html>.
+ 
+Content-Type incorreto: provavelmente text/html; deveria ser application/json.
+
+Formato de erro não padronizado: não há código de erro, mensagem estruturada ou documentação de erros.
+
+Mistura de camadas: a API está devolvendo HTML de interface/apresentação, quando deveria devolver dados.
+
+Falta de tratamento para outros casos: ID inválido, aluno sem matrículas, falta de autenticação/permissão etc.
+
+Rota e método estão adequados: GET /api/alunos/{id}/matriculas é uma rota para listar a subcoleção de matrículas de um aluno. O problema está na resposta de erro.
+
+
 2. Seu redesenho (método + rota + status codes):
+
+Método + rota:
+```http
+GET /api/alunos/{id}/matriculas
+```
+Exemplo:
+```http
+GET /api/alunos/7/matriculas
+```
+Resposta de sucesso — aluno existe e tem matrículas:
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+[
+ {
+   "id": 10,
+   "alunoId": 7,
+   "disciplina": "Matemática",
+   "periodo": "2026.1"
+ },
+ {
+   "id": 11,
+   "alunoId": 7,
+   "disciplina": "Física",
+   "periodo": "2026.1"
+ }
+]
+```
+Resposta de sucesso — aluno existe, mas não tem matrículas:
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+[]
+```
+Resposta de erro — aluno não encontrado:
+```http
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+{
+ "erro": "Aluno não encontrado",
+ "codigo": "ALUNO_NAO_ENCONTRADO",
+ "detalhes": "Não existe aluno com id 7"
+}
+```
+
+```http
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+{
+ "type": "https://api.escolatech.com/errors/aluno-nao-encontrado",
+ "title": "Aluno não encontrado",
+ "status": 404,
+ "detail": "Não existe aluno com id 7",
+ "instance": "/api/alunos/7/matriculas"
+}
+```
+Status codes recomendados:
+200 OK: lista retornada com sucesso, mesmo que vazia.
+400 Bad Request: ID inválido, ex.: /api/alunos/abc/matriculas.
+401 Unauthorized: usuário não autenticado.
+403 Forbidden: usuário sem permissão para ver as matrículas.
+404 Not Found: aluno não existe.
+500 Internal Server Error: erro inesperado no servidor.
 
 ## ENDPOINT 06 — PUT /api/atualizarNotaParcial?aluno=7&disc=12&nota=8.5
 
