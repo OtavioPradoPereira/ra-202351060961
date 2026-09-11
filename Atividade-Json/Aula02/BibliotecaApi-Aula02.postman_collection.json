@@ -1,0 +1,202 @@
+{
+  "info": {
+    "_postman_id": "bibliotecaapi-aula02",
+    "name": "BibliotecaApi - Aula 02",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET - Lista (200)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - Id existente (200)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - Id inexistente (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5268/api/livros/9999",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros", "9999"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - Válido (201 + Location)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titulo\": \"1984\",\r\n  \"autor\": \"George Orwell\",\r\n  \"ano\": 1949\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - Sem título (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"autor\": \"Sem titulo\",\r\n  \"ano\": 2020\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT - Id existente (200)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titulo\": \"Dom Casmurro (ed. revisada)\",\r\n  \"autor\": \"Machado de Assis\",\r\n  \"ano\": 1899\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT - Id inexistente (404)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titulo\": \"Arquitetura de aplicacoes web\",\r\n  \"autor\": \"Otávio Prado Pereira\",\r\n  \"ano\": 2003\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5268/api/livros/9999",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros", "9999"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE - Id existente (204)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "description": "A primeira requisição DELETE encontra o livro e o apaga com sucesso. O status 204 significa \"deu certo, mas não tenho nada para te devolver\".",
+        "url": {
+          "raw": "http://localhost:5268/api/livros/3",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros", "3"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE - O mesmo id de novo (404)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "description": "A segunda requisição DELETE tenta apagar o mesmo ID, mas como ele já foi deletado na primeira vez, a API não encontra mais esse recurso no banco de dados, retornando 404.",
+        "url": {
+          "raw": "http://localhost:5268/api/livros/3",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5268",
+          "path": ["api", "livros", "3"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
