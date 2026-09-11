@@ -357,7 +357,74 @@ Resposta: 200 OK + "OK".
 
 1. Qual(is) problema(s) de design vocês identificam?
 
+***Resposta***
+
+Verbo/ação na URL: atualizarNotaParcial é uma ação, não um recurso. Isso caracteriza estilo RPC, não REST.
+
+Dados de negócio na query string: aluno, disc e nota deveriam estar no path/body. Query string é para filtros, paginação, ordenação etc. Além disso, URLs vazam em logs, histórico, proxies e ferramentas de monitoramento isso é ruim para privacidade/LGPD, já que nota é dado educacional.
+
+Uso inadequado de PUT: PUT deve substituir a representação completa de um recurso. 
+
+Como a intenção é atualizar só a nota parcial, o mais adequado é PATCH.
+
+PUT sem body: semanticamente estranho; a nota deveria ir no corpo da requisição.
+
+IDs fora do path: aluno=7 e disc=12 identificam recursos e deveriam compor a URI.
+
+Nomes ruins/ambíguos: disc, atualizarNotaParcial, camelCase na rota.
+
+Resposta pobre: 200 OK + "OK" não retorna representação atualizada, não informa 
+
+Content-Type, dificulta validação pelo cliente e não documenta erros.
+
+Faltam status codes de erro: 400, 401, 403, 404, 409, 422 etc.
+
+Faltam preocupações de API: versionamento, autenticação/autorização, validação, concorrência com ETag/If-Match.
+
 2. Seu redesenho (método + rota + status codes):
+
+***Resposta*** 
+```http
+PATCH /api/v1/alunos/{alunoId}/disciplinas/{disciplinaId}/nota-parcial
+Content-Type: application/json
+{
+ "valor": 8.5
+}
+```
+Exemplo:
+```http
+PATCH /api/v1/alunos/7/disciplinas/12/nota-parcial
+Content-Type: application/json
+{
+ "valor": 8.5
+}
+```
+Resposta ideal:
+```http
+200 OK
+Content-Type: application/json
+```
+```json
+{
+ "alunoId": 7,
+ "disciplinaId": 12,
+ "tipo": "parcial",
+ "valor": 8.5,
+ "atualizadoEm": "2026-09-11T12:00:00Z"
+}
+```
+Status codes
+· 200 OK — atualizado com sucesso e retorna representação.
+· 204 No Content — atualizado com sucesso, se não quiser retornar corpo.
+· 400 Bad Request — JSON inválido ou campo malformado.
+· 401 Unauthorized — não autenticado.
+· 403 Forbidden — sem permissão para alterar nota.
+· 404 Not Found — aluno, disciplina ou matrícula inexistente.
+· 409 Conflict — conflito de estado/versão.
+· 412 Precondition Failed — se usar If-Match/ETag e a versão estiver desatualizada.
+· 422 Unprocessable Entity — nota fora do intervalo permitido, ex.: menor que 0 ou maior que 10.
+· 415 Unsupported Media Type — Content-Type diferente de application/json.
+· 500 Internal Server Error — erro inesperado no servidor.
 
 ## DESAFIO
 
