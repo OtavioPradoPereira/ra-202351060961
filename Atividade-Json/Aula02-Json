@@ -1,0 +1,180 @@
+{
+ "info": {
+   "_postman_id": "b1b2c3d4-e5f6-7890-abcd-ef1234567890",
+   "name": "BibliotecaApi - Aulas",
+   "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+ },
+ "item": [
+   {
+     "name": "GET - lista (200)",
+     "request": {
+       "method": "GET",
+       "header": [],
+       "url": {
+         "raw": "http://localhost:5268/api/livros",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "GET - id existente (200)",
+     "request": {
+       "method": "GET",
+       "header": [],
+       "url": {
+         "raw": "http://localhost:5268/api/livros/1",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros", "1"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "GET - id inexistente (404)",
+     "request": {
+       "method": "GET",
+       "header": [],
+       "url": {
+         "raw": "http://localhost:5268/api/livros/9999",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros", "9999"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "POST - válido (201 + Location)",
+     "request": {
+       "method": "POST",
+       "header": [
+         { "key": "Content-Type", "value": "application/json" }
+       ],
+       "body": {
+         "mode": "raw",
+         "raw": "{\n    \"titulo\": \"Refactoring\",\n    \"autor\": \"Martin Fowler\",\n    \"ano\": 2018,\n    \"disponivel\": true\n}",
+         "options": {
+           "raw": { "language": "json" }
+         }
+       },
+       "url": {
+         "raw": "http://localhost:5268/api/livros",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "POST - sem título (400)",
+     "request": {
+       "method": "POST",
+       "header": [
+         { "key": "Content-Type", "value": "application/json" }
+       ],
+       "body": {
+         "mode": "raw",
+         "raw": "{\n    \"autor\": \"Sem titulo\",\n    \"ano\": 2020,\n    \"disponivel\": true\n}",
+         "options": {
+           "raw": { "language": "json" }
+         }
+       },
+       "url": {
+         "raw": "http://localhost:5268/api/livros",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "PUT - id existente (200)",
+     "request": {
+       "method": "PUT",
+       "header": [
+         { "key": "Content-Type", "value": "application/json" }
+       ],
+       "body": {
+         "mode": "raw",
+         "raw": "{\n    \"titulo\": \"Clean Architecture (2ª ed.)\",\n    \"autor\": \"Robert C. Martin\",\n    \"ano\": 2017,\n    \"disponivel\": false\n}",
+         "options": {
+           "raw": { "language": "json" }
+         }
+       },
+       "url": {
+         "raw": "http://localhost:5268/api/livros/1",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros", "1"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "PUT - id inexistente (404)",
+     "request": {
+       "method": "PUT",
+       "header": [
+         { "key": "Content-Type", "value": "application/json" }
+       ],
+       "body": {
+         "mode": "raw",
+         "raw": "{\n    \"titulo\": \"Teste\",\n    \"autor\": \"Teste\",\n    \"ano\": 2000,\n    \"disponivel\": true\n}",
+         "options": {
+           "raw": { "language": "json" }
+         }
+       },
+       "url": {
+         "raw": "http://localhost:5268/api/livros/9999",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros", "9999"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "DELETE - id existente (204)",
+     "request": {
+       "method": "DELETE",
+       "header": [],
+       "url": {
+         "raw": "http://localhost:5268/api/livros/3",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros", "3"]
+       }
+     },
+     "response": []
+   },
+   {
+     "name": "DELETE - o mesmo id de novo (404)",
+     "request": {
+       "method": "DELETE",
+       "header": [],
+       "url": {
+         "raw": "http://localhost:5268/api/livros/3",
+         "protocol": "http",
+         "host": ["localhost"],
+         "port": "5268",
+         "path": ["api", "livros", "3"]
+       }
+     },
+     "response": []
+   }
+ ]
+}
