@@ -1,0 +1,9 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/cafes
+description: ""
+url: http://localhost:5301/api/v1/cafes?page=1&size=5
+method: GET
+queryParams:
+  page: "1"
+  size: "5"
+order: 1789556910412

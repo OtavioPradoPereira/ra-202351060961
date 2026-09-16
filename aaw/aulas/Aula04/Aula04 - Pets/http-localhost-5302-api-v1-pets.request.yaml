@@ -1,0 +1,9 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/pets
+description: ""
+url: http://localhost:5302/api/v1/pets
+method: POST
+body:
+  type: json
+  content: ""
+order: 3719321097495122

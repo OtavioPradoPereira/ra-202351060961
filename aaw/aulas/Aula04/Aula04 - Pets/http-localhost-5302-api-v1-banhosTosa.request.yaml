@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/banhosTosa
+description: ""
+url: http://localhost:5302/api/v1/banhosTosa
+method: GET
+order: 3160565116458216

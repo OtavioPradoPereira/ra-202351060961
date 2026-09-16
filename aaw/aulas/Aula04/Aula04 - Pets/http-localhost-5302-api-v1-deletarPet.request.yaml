@@ -1,0 +1,8 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/deletarPet
+description: ""
+url: http://localhost:5302/api/v1/deletarPet?id=7
+method: GET
+queryParams:
+  id: "7"
+order: 2534237885749219

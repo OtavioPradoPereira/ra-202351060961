@@ -1,0 +1,5 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/getPets
+url: http://localhost:5302/api/v1/getPets
+method: POST
+order: 1789559967807

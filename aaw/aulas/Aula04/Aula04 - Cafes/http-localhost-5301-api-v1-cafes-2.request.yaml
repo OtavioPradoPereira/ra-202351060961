@@ -1,0 +1,21 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/cafes
+description: ""
+url: http://localhost:5301/api/v1/cafes
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"nome\": \"Espresso da Aula\",\r
+
+    \  \"origem\": \"Sul de Minas\",\r
+
+    \  \"torra\": \"media\",\r
+
+    \  \"preco\": 9.5,\r
+
+    \  \"disponivel\": true\r
+
+    }"
+order: 4502654377305805

@@ -1,0 +1,8 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/cafes
+description: ""
+url: http://localhost:5301/api/v1/cafes?size=100000
+method: GET
+queryParams:
+  size: "100000"
+order: 2522612132894997

@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/pedidos/1/itens
+description: ""
+url: http://localhost:5301/api/v1/pedidos/1/itens
+method: GET
+order: 4503473433512729

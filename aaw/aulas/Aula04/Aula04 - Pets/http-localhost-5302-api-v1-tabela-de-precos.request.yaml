@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/tabela-de-precos
+description: ""
+url: http://localhost:5302/api/v1/tabela-de-precos
+method: GET
+order: 4473024228498061

@@ -1,0 +1,8 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/cafes/1
+description: ""
+url: http://localhost:5301/api/v1/cafes/1
+method: GET
+headers:
+  If-None-Match: '"cafe-1-v1"'
+order: 3874398535551752

@@ -1,0 +1,5 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/cafes/5
+url: http://localhost:5301/api/v1/cafes/5
+method: DELETE
+order: 4503401006519735

@@ -1,0 +1,14 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/pets/12/vacinas
+description: ""
+url: http://localhost:5302/api/v1/pets/12/vacinas
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "vacina": "Rabies"
+    }
+order: 4447843774088942

@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/petshops/1/clientes/5/pets/9/consultas/12/exames/6
+description: ""
+url: http://localhost:5302/api/v1/petshops/1/clientes/5/pets/9/consultas/12/exames/6
+method: GET
+order: 4313762655359930

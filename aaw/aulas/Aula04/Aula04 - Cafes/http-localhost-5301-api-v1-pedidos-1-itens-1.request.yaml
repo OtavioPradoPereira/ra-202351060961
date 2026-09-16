@@ -1,0 +1,11 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/pedidos/1/itens
+description: ""
+url: http://localhost:5301/api/v1/pedidos/1/itens
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: '{"cafeId": 5, "quantidade": 2}'
+order: 4503489413325741

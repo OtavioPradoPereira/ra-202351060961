@@ -1,0 +1,15 @@
+$kind: http-request
+name: http://localhost:5301/api/v1/cafes
+description: ""
+url: http://localhost:5301/api/v1/cafes
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"origem\": \"Sul de Minas\",\r
+
+    \  \"preco\": 9.5\r
+
+    }"
+order: 4503248373198523

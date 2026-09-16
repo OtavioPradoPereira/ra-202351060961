@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:5302/api/v1/consultas
+description: ""
+url: http://localhost:5302/api/v1/consultas
+method: GET
+order: 4340655656602521
