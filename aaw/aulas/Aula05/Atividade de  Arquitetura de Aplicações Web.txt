@@ -1,0 +1,18 @@
+Onde o filtro do /produtos/barato roda em cada implementação?
+
+No modo SQL: O filtro roda no banco de dados. O ProdutoRepositorioSql.cs usa _db.Produtos.Where(p => p.Preco < precoMaximo). O Entity Framework traduz isso para uma cláusula SQL (SELECT ... WHERE Preco < @max). O banco faz o trabalho pesado e devolve só os produtos que atendem ao critério.
+
+No modo Documento: O filtro roda na memória da aplicação. O ProdutoRepositorioDocumento.cs precisa ler todos os arquivos .json da pasta dados/ (método ObterTodos()), transformá-los em objetos C#, e só então usar o LINQ (Where) para filtrar.
+
+O que isso significa para coleções gigantes?
+
+No modo SQL, mesmo com 1 milhão de produtos, o banco usa índices para achar os baratos rapidamente. É extremamente eficiente.
+
+No modo Documento, a aplicação precisaria abrir e ler 1 milhão de arquivos JSON para a memória, o que causaria lentidão extrema (I/O pesado) e possivelmente estouraria a memória RAM. Para coleções gigantes, o modo Documento não escala para esse tipo de consulta.
+
+Qual sobrevive sem migração? Por quê?
+
+O modo Documento sobrevive sem migração. Como cada arquivo JSON é independente e "sem esquema fixo", adicionar Tags não quebrou nada — os arquivos antigos apenas não têm esse campo, e os novos têm. Já no modo SQL, o Entity Framework exige que o modelo da aplicação case com o esquema da tabela. Adicionar List<string> gerou um erro porque o EF não sabe mapear listas para colunas sem uma configuração explícita (relação 1:N ou conversor de valor). Para fazer isso funcionar no SQL, seria necessário: configurar o mapeamento, rodar uma migração (dotnet ef migrations add) e atualizar o banco (dotnet ef database update). Isso é o custo do esquema rígido dos bancos relacionais.
+
+
+
