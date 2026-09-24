@@ -1,0 +1,32 @@
+1. Por que o pagamento é síncrono nos dois fluxos? Poderia ser assíncrono?
+O pagamento é síncrono porque o cliente precisa saber imediatamente se o cartão foi aprovado ou recusado para prosseguir. Se fosse assíncrono, o cliente faria um pedido sem garantia de pagamento, gerando problemas de negócio. Em produção pode ser assíncrono em cenários específicos (PIX via webhook, boleto), mas isso muda a UX.
+
+2. O que acontece se a fila perder um evento?
+O Channel<T> está em memória. Se a LojaApi reiniciar ou cair, todos os eventos na fila são perdidos para sempre. O cliente recebeu HTTP 202 e acha que está tudo certo, mas a notificação nunca será enviada. É uma falha silenciosa — inaceitável em produção.
+
+3. Em produção, o que substituiria o Channel<T>?
+Um message broker real com persistência em disco, como:
+
+RabbitMQ (AMQP, muito usado em .NET)
+
+Apache Kafka (streaming, alta escala)
+
+Azure Service Bus / AWS SQS (cloud)
+
+Esses garantem que a mensagem sobrevive a reinícios da aplicação.
+
+4. Se a NotificacaoApi falhar, como o consumidor deveria reagir?
+Implementando:
+
+Retry com backoff exponencial (tentar 3x com intervalos crescentes: 1s, 2s, 4s).
+
+Dead Letter Queue (DLQ): após N tentativas, mover a mensagem para uma fila especial para análise manual.
+
+Idempotência: garantir que reprocessar a mesma mensagem não gere notificação duplicada.
+
+5. Tabela Comparativa:
+
+Fluxo	Tempo de resposta	Notificação chega?
+Síncrono	~4500 ms	☐ Imediata / ☑ Pode falhar (bloqueia a resposta)
+Assíncrono	~1000 ms	☑ Em background / ☐ Não garantida (fila em memória)
+
