@@ -32,11 +32,11 @@ No checkout do PagFácil, ao clicar em “Pagar”, o serviço de Pagamentos pre
 2. Desenhe o fluxo (caixas = serviços, setas = chamadas/mensagens):
 
 [cliente] --> (verificar pagamento) ---> [pagamentos]
-   |
+    |
 [pagamentos] ----> consulta de saldo ------> [conta]
-   |
+    |
 [conta] ----> aprovado/negado -----> [resultado]
-   |
+    |
 [resultado da compra]
 
 
@@ -63,17 +63,17 @@ Após criar a conta no CadastraJá, o sistema envia um e-mail de boas-vindas. O 
 2. Desenhe o fluxo (caixas = serviços, setas = chamadas/mensagens):
 
 [Usuário] ---> (cria conta) --- [CadastraJá]
-   |
-   |
+    |
+    |
 [CadastraJá] ----> cadastro concluído --- [Fila de mensagens]
-   |
-   | 
+    |
+    | 
 [Fila de mensagens] ---> enviar e-mail ---- [Serviço de E-mail]
-   |
-   | 
+    |
+    | 
 [Serviço de E-mail] ---> sucesso/falha ---- [Provedor de E-mail]
-   |
-   |
+    |
+    |
 [Provedor de E-mail]
 
 
@@ -96,13 +96,13 @@ No marketplace MegaMarket, cada venda gera uma baixa no serviço de Estoque. Nas
 2. Desenhe o fluxo (caixas = serviços, setas = chamadas/mensagens):
 
 [Checkout] ---- venda realizada ----- [Fila de eventos]
-   |
-   |
+    |
+    |
 [Fila de eventos] ---- evento "Venda realizada" --- [Serviço de Estoque]
-   |
-   | 
+    |
+    | 
 [Serviço de Estoque] ---- [baixa do estoque]
-   |
+    |
 [Baixa do estoque]
 
 
@@ -126,15 +126,15 @@ A tela inicial do AppBanco mostra saldo, fatura do cartão, investimentos, empr�
 1. Estilo recomendado: ☐ API Gateway/BFF
 
 2. Desenhe o fluxo (caixas = serviços, setas = chamadas/mensagens):
-                 [Serviço de Saldo]
-                          |
-                          |
-           [App Mobile/Web] --- [API Gateway / BFF]
-                          |
-            -------------------------------------------
-            |             |             |             |
-            |             |             |             |
-       [Fatura]  [Investimentos] [Empréstimos] [Cashback]
+                  [Serviço de Saldo]
+                           |
+                           |
+            [App Mobile/Web] --- [API Gateway / BFF]
+                           |
+             -------------------------------------------
+             |             |             |             |
+             |             |             |             |
+        [Fatura]  [Investimentos] [Empréstimos] [Cashback]
 
 
 3. Justificativa (mínimo 2 fatores): O BFF pode agregar e padronizar as respostas dos diferentes serviços, permite criar respostas diferentes para mobile e web já que a versão web poderá precisar de mais dados.
